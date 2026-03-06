@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Liam Delagrense</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&family=Syne:wght@400;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #090b0f;
+      --bg2:     #0d1017;
+      --border:  #1e2535;
+      --dim:     #2a3448;
+      --muted:   #4a5568;
+      --text:    #9ba8bb;
+      --bright:  #d4dde8;
+      --white:   #eef2f7;
+      --green:   #4ade80;
+      --green2:  #86efac;
+      --amber:   #fbbf24;
+      --blue:    #60a5fa;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Syne', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 9999;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 4px);
+      pointer-events: none;
+    }
+
+    ::selection { background: var(--green); color: var(--bg); }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 0 48px; height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(9,11,15,0.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+    .nav-left { display: flex; align-items: center; gap: 6px; color: var(--green); font-size: 12px; font-weight: 500; }
+    .nav-left .prompt { color: var(--muted); }
+    .nav-right { display: flex; gap: 32px; list-style: none; }
+    .nav-right a { color: var(--muted); text-decoration: none; font-size: 11px; transition: color 0.15s; }
+    .nav-right a::before { content: './'; color: var(--dim); }
+    .nav-right a:hover { color: var(--green); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 80px 48px 48px;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    /* Pixel font name */
+    .hero-name {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(22px, 4.2vw, 64px);
+      color: var(--green);
+      line-height: 1.4;
+      letter-spacing: 2px;
+      text-shadow: 0 0 24px rgba(74,222,128,0.3);
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeIn 0.5s 0.1s ease forwards;
+      word-break: break-word;
+    }
+
+    .hero-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 48px;
+      align-items: start;
+      opacity: 0;
+      animation: fadeIn 0.5s 0.5s ease forwards;
+    }
+
+    .hero-left { }
+
+    .hero-tagline {
+      font-family: var(--sans);
+      font-size: clamp(32px, 3.8vw, 52px);
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -1.5px;
+      line-height: 1.05;
+      white-space: nowrap;
+      margin-bottom: 24px;
+    }
+    .hero-tagline .hl { color: var(--green); display: block; }
+
+    .hero-meta { display: flex; flex-direction: column; gap: 5px; margin-bottom: 28px; }
+    .meta-line { font-size: 11px; color: var(--muted); }
+    .meta-line .key { color: var(--dim); margin-right: 8px; }
+    .meta-line .val { color: var(--bright); }
+    .meta-line .val.green { color: var(--green); }
+
+    .hero-actions { display: flex; gap: 12px; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 20px;
+      font-family: var(--mono); font-size: 11px; font-weight: 500;
+      text-decoration: none; border-radius: 2px; transition: all 0.15s;
+    }
+    .btn-primary { background: var(--green); color: var(--bg); border: 1px solid var(--green); }
+    .btn-primary:hover { background: var(--green2); border-color: var(--green2); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--muted); color: var(--bright); }
+
+    /* terminal */
+    .hero-terminal { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .terminal-bar {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 8px 14px; display: flex; align-items: center; gap: 8px;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
+    .terminal-title { font-size: 11px; color: var(--muted); margin-left: 8px; }
+    .terminal-body { padding: 16px 20px; font-size: 12px; line-height: 2; }
+    .t-line { display: flex; gap: 0; }
+    .t-prompt { color: var(--green); margin-right: 6px; flex-shrink: 0; }
+    .t-cmd { color: var(--bright); }
+    .t-out { color: var(--muted); padding-left: 4px; }
+    .t-key { color: var(--blue); }
+    .t-val { color: var(--amber); }
+    .t-ok  { color: var(--green); }
+    .t-cursor { display: inline-block; width: 7px; height: 13px; background: var(--green); vertical-align: middle; animation: blink 1s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── SHARED ── */
+    .sec { max-width: 1200px; margin: 0 auto; padding: 80px 48px; }
+    .sec-header { display: flex; align-items: center; gap: 14px; margin-bottom: 48px; }
+    .sec-num { color: var(--green); font-size: 11px; flex-shrink: 0; }
+    .sec-title { font-family: var(--sans); font-size: 26px; font-weight: 800; color: var(--white); letter-spacing: -0.5px; }
+    .sec-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+    .divider { height: 1px; background: var(--border); max-width: 1200px; margin: 0 auto; }
+    .ascii-div { text-align: center; font-size: 11px; color: var(--dim); padding: 20px 0; letter-spacing: 0.15em; overflow: hidden; }
+
+    /* ── ABOUT ── */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+
+
+
+
+    .about-text { font-size: 12px; color: var(--muted); line-height: 1.9; }
+    .about-text p + p { margin-top: 16px; }
+
+    .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+    .stat { background: var(--bg2); padding: 22px 20px; }
+    .stat-value { font-family: var(--sans); font-size: 36px; font-weight: 800; color: var(--white); letter-spacing: -2px; line-height: 1; }
+    .stat-label { font-size: 10px; color: var(--muted); margin-top: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+
+    /* ── EXPERIENCE ── */
+    .exp-list { display: flex; flex-direction: column; gap: 2px; }
+    .exp-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 3px;
+      padding: 26px 32px; display: grid; grid-template-columns: 200px 1fr; gap: 32px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .exp-card:hover { border-color: var(--dim); transform: translateX(3px); }
+    .exp-period { font-size: 11px; color: var(--green); margin-bottom: 4px; }
+    .exp-company { font-size: 11px; color: var(--muted); }
+    .exp-loc { font-size: 10px; color: var(--dim); margin-top: 2px; }
+    .exp-title { font-family: var(--sans); font-size: 18px; font-weight: 700; color: var(--white); letter-spacing: -0.3px; margin-bottom: 10px; }
+    .exp-desc { font-size: 12px; color: var(--muted); line-height: 1.85; max-width: 580px; }
+    .exp-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .tag { font-size: 10px; color: var(--muted); border: 1px solid var(--border); padding: 2px 10px; border-radius: 2px; }
+
+    /* ── SKILLS ── */
+    .skills-wrap { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; }
+    .skill-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 3px; padding: 28px; transition: border-color 0.2s; }
+    .skill-block:hover { border-color: var(--dim); }
+    .skill-block-title { font-size: 11px; font-weight: 500; color: var(--green); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .skill-block-title::before { content: '##'; color: var(--dim); font-size: 10px; }
+    .skill-items { display: flex; flex-direction: column; gap: 8px; }
+    .skill-row { display: flex; align-items: center; gap: 10px; font-size: 11px; }
+    .skill-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--dim); flex-shrink: 0; }
+    .skill-name { color: var(--bright); flex: 1; }
+    .skill-bar-wrap { width: 80px; height: 3px; background: var(--border); border-radius: 1px; flex-shrink: 0; }
+    .skill-bar { height: 100%; background: var(--green); border-radius: 1px; }
+
+    /* ── EDUCATION ── */
+    .edu-list { display: flex; flex-direction: column; gap: 2px; }
+    .edu-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 3px; padding: 24px 32px; display: grid; grid-template-columns: 200px 1fr; gap: 32px; transition: border-color 0.2s; }
+    .edu-card:hover { border-color: var(--dim); }
+    .edu-period { font-size: 11px; color: var(--green); }
+    .edu-school { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .edu-degree { font-family: var(--sans); font-size: 16px; font-weight: 700; color: var(--white); letter-spacing: -0.2px; margin-bottom: 6px; }
+    .edu-detail { font-size: 11px; color: var(--muted); line-height: 1.8; }
+    .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: var(--amber); border: 1px solid rgba(251,191,36,0.25); padding: 2px 10px; border-radius: 2px; margin-top: 8px; }
+
+    /* ── CONTACT ── */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: start; }
+    .contact-ascii { 
+      font-size: 12px; 
+      line-height: 1.5; 
+      color: var(--green); 
+      white-space: pre; 
+      font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+      font-variant-ligatures: none;
+      letter-spacing: 0;
+      opacity: 0.8;
+      display: inline-block;
+    }
+    .contact-intro { font-size: 12px; color: var(--muted); line-height: 1.85; margin-bottom: 24px; }
+    .contact-links { display: flex; flex-direction: column; gap: 8px; }
+    .contact-link { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: var(--bg2); border: 1px solid var(--border); border-radius: 3px; text-decoration: none; color: var(--bright); font-size: 12px; transition: all 0.15s; }
+    .contact-link:hover { border-color: var(--green); color: var(--green); transform: translateX(4px); }
+    .contact-link .arrow { color: var(--dim); transition: color 0.15s; }
+    .contact-link:hover .arrow { color: var(--green); }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); padding: 20px 48px; max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; font-size: 11px; color: var(--dim); }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .reveal.on { opacity: 1; transform: none; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 0 20px; }
+      .nav-right { display: none; }
+      #hero, .sec { padding: 72px 20px 48px; }
+      .hero-bottom { grid-template-columns: 1fr; }
+      .hero-name { font-size: 18px; }
+      .hero-tagline { white-space: normal; }
+      .about-grid { grid-template-columns: 1fr; }
+      .exp-card, .edu-card { grid-template-columns: 1fr; gap: 6px; }
+      .skills-wrap { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 6px; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <span class="prompt">~/</span>
+    <span>liam-delagrense</span>
+  </div>
+  <ul class="nav-right">
+    <li><a href="#about">about</a></li>
+    <li><a href="#experience">experience</a></li>
+    <li><a href="#skills">skills</a></li>
+    <li><a href="#education">education</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <div class="hero-name">LIAM<br>DELAGRENSE</div>
+
+  <div class="hero-bottom">
+    <div class="hero-left">
+      <div class="hero-tagline">
+        Security analyst.<br><span class="hl">Offensive minded.</span>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-line"><span class="key">//</span><span class="val">Cybersecurity Analyst @ Intigriti</span></div>
+        <div class="meta-line"><span class="key">//</span><span class="val">Antwerp, Belgium</span></div>
+        <div class="meta-line"><span class="key">//</span><span class="val green">Based in Antwerp, Belgium</span></div>
+      </div>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">./contact</a>
+        <a href="#experience" class="btn btn-ghost">./experience</a>
+      </div>
+    </div>
+
+    <div class="hero-terminal">
+      <div class="terminal-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <span class="terminal-title">liam@delagrense: ~</span>
+      </div>
+      <div class="terminal-body">
+        <div class="t-line"><span class="t-prompt">❯</span><span class="t-cmd">whoami</span></div>
+        <div class="t-line"><span class="t-out">Liam Delagrense, cybersecurity analyst, vulnerability researcher, security engineer</span></div>
+        <div class="t-line" style="margin-top:6px"><span class="t-prompt">❯</span><span class="t-cmd">cat current_role.json</span></div>
+        <div class="t-line"><span class="t-out">{ <span class="t-key">"company"</span>: <span class="t-val">"Intigriti"</span>, <span class="t-key">"role"</span>: <span class="t-val">"Cybersecurity Analyst"</span>, <span class="t-key">"since"</span>: <span class="t-val">"2024"</span> }</span></div>
+        <div class="t-line" style="margin-top:6px"><span class="t-prompt">❯</span><span class="t-cmd">cat skills.txt | grep primary</span></div>
+        <div class="t-line"><span class="t-out"><span class="t-ok">✓</span> Burp Suite · CVSS 3.1/4.0 · OWASP Top 10 · Python · PowerShell</span></div>
+        <div class="t-line" style="margin-top:6px"><span class="t-prompt">❯</span><span class="t-cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec">
+    <div class="sec-header reveal">
+      <span class="sec-num">// 01</span>
+      <span class="sec-title">About</span>
+      <div class="sec-line"></div>
+    </div>
+    <div class="about-grid">
+
+      <!-- Text -->
+      <div class="about-text reveal" style="transition-delay:0.1s">
+        <p>I'm a cybersecurity analyst at Intigriti, one of Europe's leading bug bounty and responsible disclosure platforms. Day to day I assess and triage vulnerability reports from security researchers, applying CVSS 3.1 and 4.0 scoring, and bridging communication between researchers and client security teams.</p>
+        <p>My degree specialisation was in offensive security: pentesting, reverse engineering, malware analysis, mobile security, and forensics. Outside work I grind PortSwigger Web Security Academy labs, do bug bounty research, and have some application security experience across various programs.</p>
+        <p>Outside of work, I build indie games in Unity and keep pushing deeper into offensive security through research and labs.</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="about-stats reveal" style="transition-delay:0.15s">
+        <div class="stat"><div class="stat-value">1+</div><div class="stat-label">Yrs professional exp.</div></div>
+        <div class="stat"><div class="stat-value">BSc</div><div class="stat-label">Comp. Science</div></div>
+        <div class="stat"><div class="stat-value">BE</div><div class="stat-label">Antwerp</div></div>
+        <div class="stat"><div class="stat-value">4</div><div class="stat-label">Languages</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="ascii-div">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="sec">
+    <div class="sec-header reveal">
+      <span class="sec-num">// 02</span>
+      <span class="sec-title">Experience</span>
+      <div class="sec-line"></div>
+    </div>
+    <div class="exp-list">
+
+      <div class="exp-card reveal" style="transition-delay:0.05s">
+        <div>
+          <div class="exp-period">Aug 2024 → present</div>
+          <div class="exp-company">Intigriti</div>
+          <div class="exp-loc">Antwerp, Belgium</div>
+        </div>
+        <div>
+          <div class="exp-title">Cybersecurity Analyst</div>
+          <div class="exp-desc">Triage and assess vulnerability reports from researchers on Europe's leading bug bounty platform. Evaluate web, mobile, and API attack surfaces. Apply CVSS 3.1 and 4.0 scoring and bridge communication between researchers and client security teams to drive accurate remediation.</div>
+          <div class="exp-tags">
+            <span class="tag">Bug Bounty</span><span class="tag">CVSS 3.1 / 4.0</span><span class="tag">Vuln Triage</span><span class="tag">OWASP Top 10</span><span class="tag">Web & API Security</span><span class="tag">Burp Suite</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-card reveal" style="transition-delay:0.1s">
+        <div>
+          <div class="exp-period">Feb 2024 → May 2024</div>
+          <div class="exp-company">VDAB</div>
+          <div class="exp-loc">Brussels, Belgium</div>
+        </div>
+        <div>
+          <div class="exp-title">Intern Cybersecurity Engineer</div>
+          <div class="exp-desc">Designed and executed a targeted spear-phishing campaign to assess employee security awareness. Automated simulation workflows using Python and PowerShell. Contributed to incident response: investigating, documenting, and resolving active threats.</div>
+          <div class="exp-tags">
+            <span class="tag">Social Engineering</span><span class="tag">Spear Phishing</span><span class="tag">Python</span><span class="tag">PowerShell</span><span class="tag">Incident Response</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-card reveal" style="transition-delay:0.15s">
+        <div>
+          <div class="exp-period">2018 → 2023</div>
+          <div class="exp-company">IKWV</div>
+          <div class="exp-loc">Belgian Coast</div>
+        </div>
+        <div>
+          <div class="exp-title">Coast Lifeguard & First Aid Responder</div>
+          <div class="exp-desc">Five summers managing emergency response across busy coastal zones. Developed composure, situational awareness, and coordination under genuine high-pressure conditions.</div>
+          <div class="exp-tags">
+            <span class="tag">Emergency Response</span><span class="tag">Team Coordination</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="ascii-div">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="sec">
+    <div class="sec-header reveal">
+      <span class="sec-num">// 03</span>
+      <span class="sec-title">Skills</span>
+      <div class="sec-line"></div>
+    </div>
+    <div class="skills-wrap">
+      <div class="skill-block reveal" style="transition-delay:0.05s">
+        <div class="skill-block-title">Vulnerability Research</div>
+        <div class="skill-items">
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Burp Suite</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:90%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">OWASP Top 10</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:85%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">CVSS 3.1 & 4.0</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:90%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Bug Bounty (web & API)</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:70%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">PortSwigger Labs</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:75%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Application security (various programs)</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:45%"></div></div></div>
+        </div>
+      </div>
+      <div class="skill-block reveal" style="transition-delay:0.1s">
+        <div class="skill-block-title">Offensive Security</div>
+        <div class="skill-items">
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Network & system pentesting</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:60%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Social engineering</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:65%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Spear-phishing campaigns</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:70%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Reverse engineering</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:55%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Malware analysis</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:55%"></div></div></div>
+        </div>
+      </div>
+      <div class="skill-block reveal" style="transition-delay:0.15s">
+        <div class="skill-block-title">Programming</div>
+        <div class="skill-items">
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Python</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:80%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">PowerShell</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:75%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">C# / Java</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:60%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">JavaScript</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:55%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">C++</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:50%"></div></div></div>
+        </div>
+      </div>
+      <div class="skill-block reveal" style="transition-delay:0.2s">
+        <div class="skill-block-title">Platforms</div>
+        <div class="skill-items">
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Linux</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:75%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Windows Server</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:65%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Mobile security</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:55%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Digital forensics</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:55%"></div></div></div>
+        </div>
+      </div>
+      <div class="skill-block reveal" style="transition-delay:0.25s">
+        <div class="skill-block-title">Spoken Languages</div>
+        <div class="skill-items">
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">Dutch</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:100%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">English</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:95%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">French</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:25%"></div></div></div>
+          <div class="skill-row"><div class="skill-dot"></div><span class="skill-name">German</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:20%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ascii-div">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="sec">
+    <div class="sec-header reveal">
+      <span class="sec-num">// 04</span>
+      <span class="sec-title">Education</span>
+      <div class="sec-line"></div>
+    </div>
+    <div class="edu-list">
+      <div class="edu-card reveal" style="transition-delay:0.05s">
+        <div><div class="edu-period">2020 – 2024</div><div class="edu-school">Howest · Bruges</div></div>
+        <div>
+          <div class="edu-degree">BSc Applied Computer Science, Cybersecurity</div>
+          <div class="edu-detail">Two-year specialisation in cybersecurity. Modules: Network & System Pentesting · Reverse Engineering & Malware Analysis · Mobile Security · Forensic Analysis · Server Management · Data Privacy & IT Law · Cybercrime · Web & App Security</div>
+        </div>
+      </div>
+      <div class="edu-card reveal" style="transition-delay:0.1s">
+        <div><div class="edu-period">Sep – Dec 2023</div><div class="edu-school">SeoulTech · Seoul, KR</div></div>
+        <div>
+          <div class="edu-degree">Exchange Semester</div>
+          <div class="edu-detail">Seoul National University of Science & Technology. Modules: Python Programming · Multimedia Systems · Programming Language Theory</div>
+          <div class="badge">★ GPA 89.7 / 100</div>
+        </div>
+      </div>
+      <div class="edu-card reveal" style="transition-delay:0.15s">
+        <div><div class="edu-period">2018 – 2020</div><div class="edu-school">Ensorinstituut · Ostend</div></div>
+        <div>
+          <div class="edu-degree">Applied Informatics</div>
+          <div class="edu-detail">Secondary education in applied IT and informatics.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ascii-div">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="sec">
+    <div class="sec-header reveal">
+      <span class="sec-num">// 05</span>
+      <span class="sec-title">Contact</span>
+      <div class="sec-line"></div>
+    </div>
+    <div class="contact-grid">
+      <div class="reveal" style="transition-delay:0.05s">
+        <pre class="contact-ascii">╔══════════════════════════════╗
+║  interests:                  ║
+║                              ║
+║  -> penetration testing      ║
+║  -> red teaming              ║
+║  -> security engineering     ║
+║  -> game dev (Unity)         ║
+║                              ║
+║  location:  Antwerp, BE      ║
+║  remote:    yes              ║
+║  hybrid:    yes              ║
+║  in-office: yes              ║
+║                              ║
+╚══════════════════════════════╝</pre>
+      </div>
+      <div class="reveal" style="transition-delay:0.15s">
+        <p class="contact-intro">Cybersecurity analyst based in Antwerp. Reach out via email or LinkedIn.</p>
+        <div class="contact-links">
+          <button onclick="copyEmail()" class="contact-link" id="email-btn" style="width:100%;background:var(--bg2);cursor:pointer;text-align:left;font-family:var(--mono);font-size:12px;">
+            <span style="display:flex;align-items:center;gap:8px;">
+              <svg id="email-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.6"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span id="email-label">click to copy email</span>
+            </span>
+            <span class="arrow" id="email-arrow">→</span>
+          </button>
+          </a>
+          <a href="https://www.linkedin.com/in/liam-delagrense/" target="_blank" class="contact-link">
+            <span>linkedin.com/in/liam-delagrense</span><span class="arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>liam@delagrense:~$ <span style="color:var(--green)">_</span></span>
+  <span>Antwerp, Belgium · 2025</span>
+</footer>
+
+<script>
+  function copyEmail() {
+    navigator.clipboard.writeText('liamdela01@gmail.com').then(() => {
+      const label = document.getElementById('email-label');
+      const arrow = document.getElementById('email-arrow');
+      const icon  = document.getElementById('email-icon');
+      label.textContent = 'copied to clipboard';
+      arrow.style.color = 'var(--green)';
+      icon.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+      icon.style.stroke = 'var(--green)';
+      icon.style.opacity = '1';
+      setTimeout(() => {
+        label.textContent = 'click to copy email';
+        arrow.style.color = '';
+        icon.innerHTML = '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>';
+        icon.style.stroke = 'currentColor';
+        icon.style.opacity = '0.6';
+      }, 2000);
+    });
+  }
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } });
+  }, { threshold: 0.05, rootMargin: '0px 0px 0px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
